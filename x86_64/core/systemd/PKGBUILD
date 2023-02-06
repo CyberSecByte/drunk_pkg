@@ -1,14 +1,13 @@
 pkgname=systemd
-pkgver=251
+pkgver=252
 pkgrel=1
 arch=('x86_64')
 depends=('acl' 'gperf' 'lz4' 'xz' 'linux-pam' 'elfutils'
 	'kmod' 'libcap' 'libidn2' 'libgcrypt'
-	'libxslt' 'util-linux'
-	'shadow' 'gnu-efi'
-	'libxkbcommon'
-	'bash-completion' 'p11-kit'
-	'gnutls')
+	'libxslt' 'util-linux' 'openssl'
+	'shadow' 'gnu-efi' 'file'
+	'libxkbcommon' 'gnutls'
+	'bash-completion' 'p11-kit')
 makedepends=('meson' 'docbook-xsl' 'git' 'rsync' 'intltool' 'python3-pip')
 source=("https://github.com/systemd/systemd-stable/archive/refs/tags/v${pkgver}.tar.gz"
 	'drunk.conf'
