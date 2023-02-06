@@ -1,5 +1,5 @@
 pkgname=base-drunk
-pkgver=2022.3
+pkgver=2023.1
 pkgrel=1
 pkgdesc="Base metapckage alike pkg to give user/dev needed bootable CLI-System"
 arch=('x86_64')
@@ -34,6 +34,6 @@ package() {
 	mkdir -vp $pkgdir/usr/bin
 
 	# Copy over needed files
-	cp -rf ../../os-release $pkgdir/etc
-	cp -rf ../../neofetch $pkgdir/usr/bin && chmod +x $pkgdir/usr/bin/neofetch
+	cp ../../os-release $pkgdir/etc
+	cp ../../neofetch $pkgdir/usr/bin && chmod +x $pkgdir/usr/bin/neofetch
 }
