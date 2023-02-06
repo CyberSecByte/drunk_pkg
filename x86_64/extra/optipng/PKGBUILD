@@ -1,0 +1,22 @@
+pkgname=optipng
+pkgver=0.7.7
+pkgrel=1
+arch=(x86_64)
+depends=(glibc libpng libpng12 zlib)
+makedepends=(automake make gcc)
+source=(https://downloads.sourceforge.net/sourceforge/$pkgname/$pkgname-$pkgver.tar.gz)
+
+build() {
+	cd $pkgname-$pkgver
+
+	./configure \
+	--prefix=/usr \
+	--with-system-libs
+
+	make
+}
+package() {
+	cd $pkgname-$pkgver
+
+	make prefix=$pkgdir/usr
+}
