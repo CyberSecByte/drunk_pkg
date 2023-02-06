@@ -18,5 +18,7 @@ build() {
 package() {
 	cd $pkgname-$pkgver
 
-	make prefix=$pkgdir install
+	# Install here is weird
+	make prefix=$pkgdir/usr install
+	rn -rf $pkgdir/usr/man
 }
