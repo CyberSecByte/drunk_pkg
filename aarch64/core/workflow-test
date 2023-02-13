@@ -1,0 +1,22 @@
+pkgname=workflow-test
+pkgver=1.0.0
+pkgrel=1
+arch=('x86_64')
+depends=(glibc)
+makedepends=(bash)
+
+prepare() {
+	mkdir -p $pkgname-$pkgver
+}
+
+build() {
+	cd $pkgname-$pkgver
+
+	echo "This is a test"
+}
+
+package() {
+	cd $pkgname-$pkgver
+
+	echo "Again this is a test"
+}
