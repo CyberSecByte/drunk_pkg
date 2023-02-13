@@ -3,7 +3,7 @@ name: AMD64 - Package build
 on:
   push:
     branches:
-    - master
+    - better-workflows
     paths:
     - 'x86_64/**'
   pull_request:
@@ -27,34 +27,22 @@ jobs:
         fetch-depth: 1000
     - name: Clean up workflow env
       run: |
-        # Free up space ( for this workflow )
-        #sudo apt purge -yq $(dpkg -l | grep '^ii' | awk '{ print $2 }' | grep -P '(cabal-|dotnet-|ghc-|libmono|php)') \
-        #liblldb-6.0 libllvm6.0:amd64 mono-runtime-common monodoc-manual powershell ruby
-
-        #sudo apt autoremove -yq
-        #sudo rm -rf /opt/hostedtoolcache /usr/local /usr/share/dotnet /usr/share/swift
-
         # Move some stuff
         cd /home/runner/work/drunk_pkg/
         mkdir -p DRUNK/pkgbuild
+        
         cp -rf /home/runner/work/drunk_pkg/drunk_pkg/* DRUNK/pkgbuild
         mv -f DRUNK drunk_pkg
 
     - name: prepare build env
       run: |
-        # Basics
-        export HEAD_COMMIT=$(jq --raw-output .commits[-1].id "$GITHUB_EVENT_PATH")
-
         # Clone and install required deps
         mkdir -p /home/runner/work/drunk_pkg/drunk_pkg/DRUNK/
         cd /home/runner/work/drunk_pkg/drunk_pkg/DRUNK
         git clone https://git.martinvlba.eu/DrunkOS/tools.git tools --depth=10
         mkdir -p tools/tmp
 
-        # Checkout the changed commitid
-        cd pkgbuild && git reset --hard ${HEAD_COMMIT}
         cd /home/runner/work/drunk_pkg/drunk_pkg/DRUNK
-
         ln -sf tools/drunk.sh drunk
 
         mkdir -p tools/tmp
@@ -67,6 +55,7 @@ jobs:
       run: |
         cd /home/runner/work/drunk_pkg/drunk_pkg/DRUNK
         export P_ROOT=$(pwd)
+        
         # Pull drunk docker image and make new container of it
         sudo docker pull hilledkinged/drunk:latest
         docker container create \
