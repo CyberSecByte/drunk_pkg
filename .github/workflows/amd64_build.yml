@@ -3,7 +3,7 @@ name: AMD64 - Package build
 on:
   push:
     branches:
-    - better-workflows
+    - master
     paths:
     - 'x86_64/**'
   pull_request:
