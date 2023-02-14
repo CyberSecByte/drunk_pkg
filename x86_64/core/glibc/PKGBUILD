@@ -15,7 +15,7 @@ build() {
 	cd $pkgname-$pkgver
 
 	mkdir -pv build
-	cd       build
+	cd build
 
 	../configure \
 	--prefix=/usr \

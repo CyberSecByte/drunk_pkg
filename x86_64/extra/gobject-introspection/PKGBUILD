@@ -1,16 +1,11 @@
 pkgname=gobject-introspection
-pkgver=1.72.0+7+g5913e312
-gver=2.70.1
+pkgver=1.72.0
+gver=2.75.2
 pkgrel=1
 arch=('x86_64')
 makedepends=(git meson glib2)
-source=("git+https://gitlab.gnome.org/GNOME/gobject-introspection.git"
-	"git+https://gitlab.gnome.org/GNOME/glib.git#tag=$gver")
-
-pkgver() {
-	cd $pkgname
-	git describe --tags | sed 's/-/+/g'
-}
+source=(git+https://gitlab.gnome.org/GNOME/gobject-introspection.git
+	git+https://gitlab.gnome.org/GNOME/glib.git#tag=$gver)
 
 build() {
 	meson $pkgname build	\

@@ -1,15 +1,16 @@
 pkgname=ffmpeg
-pkgver=5.1
-pkgrel=3
+pkgver=5.1.2
+pkgrel=1
 arch=('x86_64')
 depends=(fdk-aac freetype2 lame libtheora
     libvorbis libvpx opus libx264 libx265
     libass vdpau alsa-lib fribidi gmp gnutls
     jack2 libdrm libglvnd pulseaudio libva
-    libxext sdl2 ocl-icd)
+    libxext sdl2 opencl-icd-loader)
 makedepends=(nasm yasm clang vulkan-headers opencl-headers)
 source=(https://ffmpeg.org/releases/ffmpeg-$pkgver.tar.xz
-    chromium-av_stream_get_first_dts.patch)
+    chromium-av_stream_get_first_dts.patch
+    hwcontext_vulkan.patch)
 
 prepare() {
     cd $pkgname-$pkgver
@@ -17,6 +18,7 @@ prepare() {
     sed -i 's/-lflite"/-lflite -lasound"/' configure
 
     patch -p0 -i ../chromium-av_stream_get_first_dts.patch
+    patch -p1 -i ../hwcontext_vulkan.patch
 }
 
 build() {
@@ -42,7 +44,7 @@ build() {
     --enable-libx265 \
     --enable-openssl
 
-    make
+    make -j4
 }
 
 package() {

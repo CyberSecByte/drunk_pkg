@@ -1,0 +1,20 @@
+pkgname=gvdb
+pkgver=1.0.0
+pkgrel=1
+arch=('x86_64')
+depends=(glibc)
+makedepends=(base-devel)
+commitid=0854af0fdb6d527a8d1999835ac2c5059976c210
+source=(git+https://gitlab.gnome.org/GNOME/gvdb.git#commit=$commitid)
+
+build() {
+	meson gvdb build \
+	--prefix=/usr \
+	--libdir=/usr/lib
+
+	meson compile -C build
+}
+
+package() {
+	meson install -C build --destdir $pkgdir
+}

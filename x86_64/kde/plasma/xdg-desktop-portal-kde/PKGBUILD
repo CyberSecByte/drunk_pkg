@@ -1,8 +1,8 @@
 pkgname=xdg-desktop-portal-kde
-pkgver=5.26.3
+pkgver=5.26.4
 pkgrel=1
 arch=('x86_64')
-depends=(plasma-framework kirigami2 kio-fuse)
+depends=(plasma-framework kirigami2 kio-fuse xdg-desktop-portal)
 makedepends=(extra-cmake-modules plasma-wayland-protocols)
 source=(https://download.kde.org/stable/plasma/$pkgver/$pkgname-$pkgver.tar.xz)
 
@@ -15,9 +15,9 @@ prepare() {
 build() {
 	cd $pkgname-$pkgver/build
 
-	cmake						\
-	-D CMAKE_INSTALL_PREFIX=/usr	\
-	-D CMAKE_BUILD_TYPE=Release	\
+	cmake \
+	-D CMAKE_INSTALL_PREFIX=/usr \
+	-D CMAKE_BUILD_TYPE=Release \
 	-Wno-dev ..
 
 	make
@@ -28,4 +28,9 @@ package() {
 	cd $pkgname-$pkgver/build
 
 	make DESTDIR=$pkgdir install
+
+	# Hacky way but its how i deal with it for now
+	mkdir -p $pkgdir/usr/lib64 && mkdir -p $pkgdir/usr/lib && touch $pkgdir/usr/lib64/ignore
+	cp -rf $pkgdir/usr/lib64/* $pkgdir/usr/lib/
+	rm -rf $pkgdir/usr/lib64 $pkgdir/usr/lib/ignore
 }

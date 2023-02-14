@@ -1,12 +1,15 @@
 pkgname=pipewire
-pkgver=0.3.60
-pkgrel=1
+pkgver=0.3.65
+pkgrel=3
 arch=(x86_64)
 depends=(pulseaudio alsa-lib libusb gst-plugins-base dbus sdl2 ncurses
-	libcanberra libsndfile bluez webrtc-audio-processing libx11 libxfixes jack2
-	libfdk-aac gst-plugin-pipewire)
-makedepends=(git meson doxygen python3 valgrind)
-source=(https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$pkgver/pipewire-$pkgver.tar.gz)
+	libcanberra libsndfile bluez webrtc-audio-processing libx11 libxfixes
+	rtkit jack2 libcamera)
+makedepends=(git meson doxygen python3 valgrind wireplumber)
+source=(https://gitlab.freedesktop.org/pipewire/pipewire/-/archive/$pkgver/pipewire-$pkgver.tar.gz
+	# Extra patches
+	meson_build.diff
+	pipewire-pulse.sh)
 install=pipewire.install
 
 prepare() {
@@ -14,6 +17,9 @@ prepare() {
 
 	# remove export of LD_LIBRARY_PATH for pw-jack as it would add /usr/lib
 	sed -i '/LD_LIBRARY_PATH/d' pipewire-jack/src/pw-jack.in
+
+	# Patching
+	patch -p1 -i $srcdir/meson_build.diff
 }
 
 build() {
@@ -22,10 +28,10 @@ build() {
 	meson build \
 	--prefix=/usr \
 	-D docs=enabled \
-	-D jack=enabled \
+	-D jack=disabled \
 	-D jack-devel=true \
 	-D libjack-path=/usr/lib \
-	-D libcamera=disabled \
+	-D libcamera=enabled \
 	-D udevrulesdir=/usr/lib/udev/rules.d \
 	-D roc=disabled \
 	-D session-managers=[]
@@ -38,7 +44,27 @@ package() {
 
 	meson install -C build --destdir "$pkgdir"
 
+	# Remove jack compiled files as they conflict
 	rm -rf $pkgdir/usr/include/jack
 	rm -rf $pkgdir/usr/lib/libjack*
 	rm -rf $pkgdir/usr/lib/pkgconfig/jack.pc
+
+	mkdir -p $pkgdir/etc/pipewire/{client-rt,client,minimal,pipewire}.conf.d
+	mkdir -p "$pkgdir/etc/alsa/conf.d"
+	mkdir -p "$pkgdir/etc/pipewire/pipewire-pulse.conf.d"
+	mkdir -p "$pkgdir/etc/pipewire/jack.conf.d"
+
+	ln -st "$pkgdir/etc/alsa/conf.d" \
+	/usr/share/alsa/alsa.conf.d/50-pipewire.conf
+	ln -st "$pkgdir/etc/alsa/conf.d" \
+	/usr/share/alsa/alsa.conf.d/99-pipewire-default.conf
+	install -Dm644 /dev/null \
+	"$pkgdir/usr/share/pipewire/media-session.d/with-alsa"
+	install -Dm644 /dev/null \
+	"$pkgdir/usr/share/pipewire/media-session.d/with-jack"
+	install -Dm644 /dev/null \
+	"$pkgdir/usr/share/pipewire/media-session.d/with-pulseaudio"
+
+	# Install profile.d scriptlet
+	install -Dt "$pkgdir/etc/profile.d" -m644 $srcdir/pipewire-pulse.sh
 }

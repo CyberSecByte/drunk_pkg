@@ -1,22 +1,30 @@
 pkgname=flex
-pkgver=2.6.4
-pkgrel=2
+pkgver=2.6.5
+pkgrel=1
 arch=('x86_64')
 depends=(glibc m4 bash)
-source=(https://github.com/westes/flex/releases/download/v$pkgver/$pkgname-$pkgver.tar.gz)
+makedepends=(help2man)
+commitid=cf66c9e5f1af02c4b6f9fb5a10f83e28143a22d4
+source=(https://github.com/westes/flex/archive/$commitid.tar.gz)
+
+prepare() {
+	cd $pkgname-$commitid
+
+	autoreconf -fvi
+}
 
 build() {
-        cd $pkgname-$pkgver
+        cd $pkgname-$commitid
 
-        sed -i "/math.h/a #include <malloc.h>" src/flexdef.h
+        ./configure \
+	--prefix=/usr
 
-        [ -d /tools ] && export HELP2MAN=/tools/bin/true
-        ./configure --prefix=/usr
         make
 }
 
 package() {
-	cd $pkgname-$pkgver
+	cd $pkgname-$commitid
+
         make DESTDIR=$pkgdir install
 
         ln -sv flex $pkgdir/usr/bin/lex

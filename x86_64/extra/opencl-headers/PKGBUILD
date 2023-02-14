@@ -1,15 +1,23 @@
 pkgname=opencl-headers
-pkgver=2022.01.04
+pkgver=2022.09.30
 pkgrel=1
 arch=('x86_64')
-source=("${pkgname}-${pkgver}.tar.gz::https://github.com/KhronosGroup/OpenCL-Headers/archive/v${pkgver}.tar.gz")
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/KhronosGroup/OpenCL-Headers/archive/refs/tags/v${pkgver}.tar.gz")
+
+build() {
+	cd OpenCL-Headers-$pkgver
+	rm -rf build && mkdir -p build && cd build
+
+	cmake \
+	-D CMAKE_INSTALL_PREFIX=/usr \
+	-D CMAKE_BUILD_TYPE=Release \
+	..
+
+	make
+}
 
 package() {
-	cd "${srcdir}"/OpenCL-Headers*/CL
+	cd OpenCL-Headers-$pkgver/build
 
-	install -dm755 "${pkgdir}"/usr/include/CL
-
-	for h in *.h; do
-		install -m 644 ${h} "${pkgdir}"/usr/include/CL/
-	done
+	make DESTDIR=$pkgdir install
 }

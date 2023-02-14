@@ -1,0 +1,19 @@
+pkgname=
+pkgver=
+pkgrel=1
+arch=(x86_64)
+depends=()
+makedepends=()
+source=()
+
+build() {
+	cd $pkgname-$pkgver
+
+
+}
+
+package() {
+	cd $pkgname-$pkgver
+
+
+}

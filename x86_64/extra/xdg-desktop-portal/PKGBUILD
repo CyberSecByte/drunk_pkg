@@ -1,8 +1,9 @@
 pkgname=xdg-desktop-portal
-pkgver=1.14.6
+pkgver=1.16.0
 pkgrel=1
 arch=(x86_64)
-depends=(glib2 pipewire fuse3 systemd libportal)
+depends=(glib2 fuse3 rtkit pipewire fuse3
+	systemd libportal flatpak)
 makedepends=(meson xmlto docbook-xsl)
 source=(https://github.com/flatpak/xdg-desktop-portal/releases/download/$pkgver/xdg-desktop-portal-$pkgver.tar.xz)
 
@@ -13,23 +14,17 @@ prepare() {
 build() {
 	cd $pkgname-$pkgver/build
 
-#	meson . build \
-#	--prefix=/usr
-
-#	ninja
-
-	./../configure \
+	meson \
 	--prefix=/usr \
-	--enable-pipewire \
-	--disable-geoclue
+	-D pipewire=enabled \
+	-D libportal=enabled \
+	..
 
-	make
+	ninja
 }
 
 package() {
 	cd $pkgname-$pkgver/build
 
-#	DESTDIR=$pkgdir ninja install
-
-	make DESTDIR=$pkgdir install
+	DESTDIR=$pkgdir ninja install
 }

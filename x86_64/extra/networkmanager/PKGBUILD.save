@@ -1,5 +1,0 @@
-pkgname=networkmanager
-pkgver=1.32.12
-pkgrev=1
-pkgdesc="Network connection manager and user applications"
-arch=(x86_64)

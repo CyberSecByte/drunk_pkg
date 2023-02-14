@@ -1,0 +1,24 @@
+pkgname=flatpak-xdg-utils
+pkgver=1.0.5
+pkgrel=1
+arch=(x86_64)
+depends=(flatpak)
+makedepends=(ninja meson cmake gcc clang)
+source=(https://github.com/flatpak/$pkgname/releases/download/$pkgver/$pkgname-$pkgver.tar.xz)
+
+build() {
+	meson \
+	--prefix=/usr \
+	--bindir=/usr/libexec/$pkgname \
+	--buildtype=plain \
+	$pkgname-$pkgver build
+
+	ninja -C build
+}
+
+package() {
+	DESTDIR="$pkgdir" ninja -C build install
+
+	install -dm755 "$pkgdir/usr/bin"
+	ln -s "/usr/libexec/${pkgname}/flatpak-spawn" "$pkgdir/usr/bin/"
+}

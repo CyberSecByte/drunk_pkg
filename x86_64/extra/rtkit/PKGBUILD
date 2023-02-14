@@ -1,0 +1,44 @@
+pkgname=rtkit
+pkgver=0.13
+pkgrel=1
+arch=(x86_64)
+depends=(dbus polkit systemd)
+makedepends=(meson vim)
+commitid=c295fa849f52b487be6433e69e08b46251950399
+source=(https://github.com/heftig/rtkit/archive/$commitid.tar.gz
+	https://patch-diff.githubusercontent.com/raw/heftig/rtkit/pull/31.patch
+	https://patch-diff.githubusercontent.com/raw/heftig/rtkit/pull/30.patch
+	https://patch-diff.githubusercontent.com/raw/heftig/rtkit/pull/29.patch)
+
+prepare() {
+	mkdir -p build
+
+	cd $pkgname-$commitid
+
+	echo "[ PATCH ]: 29"
+	patch -p1 -i ../29.patch
+
+	echo "[ PATCH ]: 30"
+	patch -p1 -i ../30.patch
+
+	echo "[ PATCH ]: 31"
+	patch -p1 -i ../31.patch
+}
+
+build() {
+	cd build
+
+	meson \
+	--prefix=/usr \
+	-D installed_tests=false \
+	../$pkgname-$commitid
+
+	ninja
+}
+
+package() {
+	DESTDIR=$pkgdir ninja -C build install
+
+	echo 'u rtkit 133 "RealtimeKit" /proc' |
+		install -Dm644 /dev/stdin "$pkgdir/usr/lib/sysusers.d/rtkit.conf"
+}

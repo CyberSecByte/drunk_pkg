@@ -1,0 +1,20 @@
+pkgname=libglnx
+pkgver=2023.1
+pkgrel=1
+arch=(x86_64)
+depends=(glib2 glibc systemd)
+makedepends=(meson ninja cmake)
+commitid=4e44fd9c174e4196a86fb6d954722feaff612c88
+source=(https://gitlab.gnome.org/GNOME/$pkgname/-/archive/$commitid/$pkgname-$commitid.tar.gz)
+
+build() {
+	meson \
+	--prefix=/usr \
+	$pkgname-$commitid build
+
+	ninja -C build
+}
+
+package() {
+	DESTDIR=$pkgdir ninja -C build install
+}

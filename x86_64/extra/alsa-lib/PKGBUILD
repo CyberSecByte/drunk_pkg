@@ -1,20 +1,23 @@
+# Alsa
 pkgname=alsa-lib
-pkgver=1.2.6.1
+pkgver=1.2.8
 pkgrel=1
 arch=('x86_64')
-depends=(doxygen python3)
+depends=(doxygen python3 alsa-topology-conf alsa-ucm-conf)
 source=(https://alsa-project.org/files/pub/lib/$pkgname-$pkgver.tar.bz2)
 
 build() {
 	cd $pkgname-$pkgver
 
-	./configure --prefix=/usr
+	./configure \
+	--prefix=/usr \
+	--without-debug
 
 	make
 }
 
 package() {
+	# Alsa
 	cd $pkgname-$pkgver
-
 	make DESTDIR=$pkgdir install
 }

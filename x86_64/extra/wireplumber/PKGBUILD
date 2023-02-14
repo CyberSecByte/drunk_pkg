@@ -1,6 +1,6 @@
 pkgname=wireplumber
-pkgver=0.4.12
-pkgrel=1
+pkgver=0.4.13
+pkgrel=2
 arch=(x86_64)
 depends=(doxygen pipewire systemd glib2 lua gobject-introspection)
 makedepends=(git meson python3-pip python3-sphinx)

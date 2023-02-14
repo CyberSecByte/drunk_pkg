@@ -1,0 +1,32 @@
+pkgname=lib32-opencl-icd-loader
+rname=opencl-icd-loader
+pkgver=2022.09.30
+pkgrel=1
+arch=('x86_64')
+source=("${rname}-${pkgver}.tar.gz::https://github.com/KhronosGroup/OpenCL-ICD-Loader/archive/refs/tags/v${pkgver}.tar.gz")
+
+build() {
+	export ASFLAGS=--32
+	export CFLAGS=-m32
+	export CXXFLAGS=-m32
+	export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+
+	cd OpenCL-ICD-Loader-$pkgver
+	rm -rf build && mkdir -p build && cd build
+
+	cmake \
+	-D CMAKE_INSTALL_PREFIX=/usr \
+	-D CMAKE_INSTALL_LIBDIR=lib32 \
+	-D CMAKE_BUILD_TYPE=Release \
+	..
+
+	make
+}
+
+package() {
+	cd OpenCL-ICD-Loader-$pkgver/build
+
+	make DESTDIR=$pkgdir install
+
+	rm -rf $pkgdir/usr/share $pkgdir/usr/bin
+}

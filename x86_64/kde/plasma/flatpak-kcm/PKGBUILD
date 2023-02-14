@@ -1,12 +1,10 @@
-pkgname=
-pkgver=5.94.0
+pkgname=flatpak-kcm
+pkgver=5.26.90
 pkgrel=1
 arch=('x86_64')
-depends=(boost giflib libepoxy libgcrypt libical libjpeg libpng
-	libxslt lmdb qrencode phonon plasma-wayland-protocols shared-mime-info
-	libdbusmenu-qt networkmanager polkit-qt modemmanager noto-fonts)
-makedepends=(cmake extra-cmake-modules docbook-xml docbook-xsl)
-durl=https://download.kde.org/stable/frameworks/5.93/portingAids
+depends=(flatpak systemsettings kcmutils)
+makedepends=(cmake extra-cmake-modules)
+durl=https://download.kde.org/unstable/plasma/$pkgver
 source=($durl/$pkgname-$pkgver.tar.xz)
 
 prepare() {

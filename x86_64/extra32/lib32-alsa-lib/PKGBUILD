@@ -1,9 +1,9 @@
 _name=alsa-lib
 pkgname=lib32-alsa-lib
-pkgver=1.2.6.1
+pkgver=1.2.8
 pkgrel=1
 arch=(x86_64)
-depends=("alsa-lib=${pkgver}")
+depends=("alsa-lib")
 source=("https://www.alsa-project.org/files/pub/lib/${_name}-${pkgver}.tar.bz2")
 
 prepare() {

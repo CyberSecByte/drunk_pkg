@@ -1,10 +1,12 @@
-pkgname=(jack2)
+pkgname=jack2
 pkgdesc="The JACK low-latency audio server"
-pkgver=1.9.19
+pkgver=1.9.22
 pkgrel=1
 arch=('x86_64')
 source=("${pkgname}::git+https://github.com/jackaudio/${pkgname}.git#tag=v${pkgver}")
-makedepends=(alsa-lib dbus expat libsndfile)
+depends=(dbus alsa-lib systemd opus rtkit)
+makedepends=(alsa-lib dbus expat libsndfile python2 python3
+	python3-dbus)
 
 build() {
 	cd $pkgname
@@ -12,11 +14,12 @@ build() {
 	export PYTHONPATH="${PWD}:${PYTHONPATH}"
 
 	python2 ./waf configure --prefix=/usr \
-		--htmldir="/usr/share/doc/${pkgname}/" \
-		--autostart=none \
-		--systemd-unit \
-		--classic \
-		--dbus
+	--htmldir="/usr/share/doc/${pkgname}/" \
+	--autostart=none \
+	--systemd-unit \
+	--classic \
+	--dbus
+
 	python2 ./waf build
 }
 

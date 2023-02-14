@@ -21,10 +21,9 @@ prepare() {
 build() {
 	cd $pkgname-$commitid
 
-	meson			\
-	--prefix=/usr		\
-	-D cpp_std=c++17	\
-	.			\
+	meson \
+	--prefix=/usr \
+	-D cpp_std=c++17 \
 	build
 
 	ninja -C build

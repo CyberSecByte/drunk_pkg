@@ -1,0 +1,33 @@
+pkgname=libcamera
+pkgver=0.0.3
+pkgrel=1
+arch=(x86_64)
+depends=(glibc)
+makedepends=(doxygen git glib2 gst-plugins-base libdrm
+libjpeg libtiff meson qt5 sdl2 systemd python3-pip)
+commitid=0f382a9926bff239e43bbc3098f111ebf612dc50
+source=(git+https://git.libcamera.org/$pkgname/$pkgname.git#tag=$commitid)
+
+prepare() {
+	mkdir -p build
+
+	pip3 install jinja2 pyyaml ply
+}
+
+build() {
+	cd build
+
+	meson \
+	--prefix=/usr \
+	-D v4l2=true \
+	-D tracing=disabled \
+	../$pkgname
+
+	ninja
+}
+
+package() {
+	cd build
+
+	DESTDIR=$pkgdir ninja install
+}

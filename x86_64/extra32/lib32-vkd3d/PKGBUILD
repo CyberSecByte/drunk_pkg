@@ -1,7 +1,7 @@
 pkgname=lib32-vkd3d
 rname=vkd3d
 pkgver=1.6
-pkgrel=1
+pkgrel=2
 arch=(x86_64)
 depends=(glslang lib32-vulkan-icd-loader lib32-libxcb
 	lib32-ncurses)
@@ -28,4 +28,6 @@ package() {
 	cd $rname-$pkgver
 
 	make DESTDIR=$pkgdir install
+
+	rm -rf $pkgdir/usr/bin $pkgdir/usr/include
 }

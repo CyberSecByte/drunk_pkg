@@ -1,13 +1,13 @@
 pkgname=mesa
-pkgver=22.3.0
+pkgver=22.3.4
 pkgrel=1
 arch=('x86_64')
 depends=('libxcb' 'fontconfig' 'libdrm' 'libx11' 'libxext' 'libxfixes' 'libxshmfence' 'libxrender'
 	'wayland' 'wayland-protocols' 'vulkan-icd-loader' 'libomxil-bellagio' 'libclc' 'libglvnd'
-	'valgrind' 'libunwind' 'vulkan-icd-loader' 'libpciaccess' 'libxxf86vm' 
+	'valgrind' 'libunwind' 'opencl-icd-loader' 'libpciaccess' 'libxxf86vm'
 	'vdpau' 'glslang' 'libva' 'llvm' 'libxvmc' 'lm-sensors' 'spirv-llvm-translator'
 	'libepoxy' 'gtk3+')
-makedepends=('directx-headers' 'vulkan-headers' 'python3-pip' 'clang' 'cmake' 'byacc'
+makedepends=('directx-headers' 'vulkan-headers' 'opencl-headers' 'python3-pip' 'clang' 'cmake' 'byacc'
 	'bison' 'rust' 'cbindgen' 'rust-bindgen')
 source=(https://mesa.freedesktop.org/archive/$pkgname-$pkgver.tar.xz
 	https://archive.mesa3d.org/demos/8.5.0/mesa-demos-8.5.0.tar.bz2
@@ -22,10 +22,8 @@ prepare() {
 
 	sed '1s/python/&3/' -i bin/symbols-check.py
 
-	#rm -rf build build2
-
-	cd ../meson-demos-8.5.0
-	patch -Np1 -i ../meson-demos_data_dir.patch
+	cd $srcdir/mesa-demos-8.5.0
+	patch -Np1 -i $srcdir/meson-demos_data_dir.patch
 }
 
 build() {

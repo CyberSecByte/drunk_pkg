@@ -1,0 +1,43 @@
+pkgname=lib32-gstreamer
+pkgver=1.21.2
+pkgrel=1
+arch=('x86_64')
+depends=(
+	# GStreamer
+	lib32-glib2 lib32-gobject-introspection lib32-gtk3+ lib32-libunwind lib32-libcap
+
+	# Other
+	lib32-ffmpeg lib32-libxrandr python3-gobject)
+makedepends=(valgrind bash-completion python3 lib32-mesa ninja bison)
+source=(https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.21.2.tar.xz)
+
+prepare() {
+	cd "${pkgname}-${pkgver}"
+
+	mkdir -p build
+}
+
+build() {
+	cd "${pkgname}-${pkgver}"/build
+
+	export CC="clang -m32"
+	export CXX="clang++ -m32"
+	export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
+
+	meson \
+	--wrap-mode=nofallback \
+	--prefix=/usr \
+	--libdir=/usr/lib32 \
+	--buildtype=release	\
+	-D package-origin=https://drunklinux.tk/ \
+	-D gst-plugins-bad:package-name="[LIB32: GStreamer]: $pkgver - DRUNK" \
+	-D gst-plugins-bad:package-origin=https://drunklinux.tk/
+
+	ninja
+}
+
+package() {
+	cd "${pkgname}-${pkgver}"/build
+
+	DESTDIR=$pkgdir ninja install
+}

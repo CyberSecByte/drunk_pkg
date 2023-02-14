@@ -1,15 +1,15 @@
 pkgname=lib32-mesa
 rpkgname=mesa
-pkgver=22.3.0
+pkgver=22.3.4
 pkgrel=1
 arch=('x86_64')
 depends=('glibc' 'lib32-libdrm' 'lib32-llvm' 'lib32-libglvnd' 'lib32-libx11' 'lib32-wayland'
 	'lib32-libxml2' 'lib32-libva' 'lib32-expat' 'lib32-cairo' 'lib32-elfutils' 'lib32-libxshmfence'
 	'lib32-libxxf86vm' 'lib32-vdpau' 'lib32-vulkan-icd-loader' 'lib32-lm-sensors' 'lib32-clang'
 	'lib32-libomxil-bellagio' 'lib32-polly' 'lib32-libxrandr' 'lib32-libunwind' 'libclc'
-	'lib32-libepoxy' 'lib32-gtk3+')
+	'lib32-libepoxy' 'lib32-gtk3+' 'lib32-opencl-icd-loader')
 source=(https://mesa.freedesktop.org/archive/mesa-$pkgver.tar.xz)
-makedepends=('directx-headers' 'vulkan-headers' 'python3-pip' 'clang' 'cmake' 'byacc' 'bison' 'glslang' 'lib32-directx-headers' 'lib32-polly')
+makedepends=('directx-headers' 'vulkan-headers' 'opencl-headers' 'python3-pip' 'clang' 'cmake' 'byacc' 'bison' 'glslang' 'lib32-directx-headers' 'lib32-polly')
 
 prepare() {
 	cd mesa-$pkgver

@@ -1,0 +1,25 @@
+pkgname=opencl-icd-loader
+pkgver=2022.09.30
+pkgrel=1
+arch=('x86_64')
+depends=(mesa)
+makedepends=(opencl-headers)
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/KhronosGroup/OpenCL-ICD-Loader/archive/refs/tags/v${pkgver}.tar.gz")
+
+build() {
+	cd OpenCL-ICD-Loader-$pkgver
+	rm -rf build && mkdir -p build && cd build
+
+	cmake \
+	-D CMAKE_INSTALL_PREFIX=/usr \
+	-D CMAKE_BUILD_TYPE=Release \
+	..
+
+	make
+}
+
+package() {
+	cd OpenCL-ICD-Loader-$pkgver/build
+
+	make DESTDIR=$pkgdir install
+}

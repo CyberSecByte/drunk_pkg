@@ -1,42 +1,61 @@
 pkgname=flatpak
-pkgver=1.14.1
-pkgrel=1
+pkgver=1.15.1
+pkgrel=3
 arch=(x86_64)
-depends=(dbus glib2 curl polkit libxau libostree json-glib libarchive
-	python3 appstream systemd fuse3 bubblewrap xdg-dbus-proxy xdg-desktop-portal)
-makedepends=(intltool gobject-introspection git xmlto)
-source=(https://github.com/flatpak/flatpak/releases/download/$pkgver/flatpak-$pkgver.tar.xz)
+depends=(dbus glib2 curl polkit libxau libostree json-glib libarchive socat
+	python3 appstream systemd fuse3 bubblewrap xdg-dbus-proxy xdg-desktop-portal
+	libglnx)
+makedepends=(intltool gobject-introspection git xmlto bison python3-pip
+	python3-pygments)
+source=(https://github.com/flatpak/flatpak/releases/download/$pkgver/flatpak-$pkgver.tar.xz
+	# For desktop entries
+	flatpak.sh
+	# Patches
+	fusermount3.diff
+	# Modified services
+	flatpak-system-helper.service)
+
+prepare() {
+	cd $pkgname-$pkgver
+
+	# Support fuse3
+	# https://bugs.archlinux.org/task/75623
+	patch -p1 -i ../fusermount3.diff
+
+	# Install some py3 modules so flatpak can be compiled
+	pip3 install pyparsing
+}
 
 build() {
 	cd $pkgname-$pkgver
 
-#	meson build \
-#	--prefix=/usr \
-#	-D dbus_config_dir=/usr/share/dbus-1/system.d \
-#	-D selinux_module=disabled \
-#	-D system_bubblewrap=bwrap \
-#	-D system_dbus_proxy=xdg-dbus-proxy
-
-#	ninja -C build
-
-	cd build
-	./../configure \
+	meson build \
 	--prefix=/usr \
-	--with-dbus-config-dir=/usr/share/dbus-1/system.d \
-	--disable-selinux-module \
-	--with-system-bubblewrap \
-	--with-system-dbus-proxy=xdg-dbus-proxy
+	-D dbus_config_dir=/usr/share/dbus-1/system.d \
+	-D selinux_module=disabled \
+	-D system_bubblewrap=bwrap \
+	-D system_dbus_proxy=xdg-dbus-proxy \
+	-D tests=false
 
-	make
+	ninja -C build
 }
 
 package() {
 	cd $pkgname-$pkgver
 
-	#DESTDIR=$pkgdir ninja install -C build
-
-	make DESTDIR=$pkgdir -C build install
+	DESTDIR=$pkgdir ninja install -C build
 
 	# Fixup mode to match polkit
 	install -d -o root -g 102 -m 750 "$pkgdir/usr/share/polkit-1/rules.d"
+
+	# Install profile.d scriptlet ( overwrite )
+	rm -f $pkgdir/etc/profile.d/flatpak.sh
+	install -Dt "$pkgdir/etc/profile.d" -m644 $srcdir/flatpak.sh
+
+	# Overwrite default flatpak services
+	cp -vf $srcdir/flatpak-system-helper.service $pkgdir/usr/lib/systemd/system/
+
+	# Misc changes
+	mkdir -p $pkgdir/var/lib/
+	ln -sf /usr/var/lib/flatpak $pkgdir/var/lib/flatpak
 }

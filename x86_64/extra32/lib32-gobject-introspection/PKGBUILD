@@ -1,23 +1,19 @@
-pkgname=gobject-introspection
-pkgver=1.71.0+5+gc887488a
-gver=2.70.1
+pkgname=lib32-gobject-introspection
+pkgver=1.74.0
+gver=2.75.2
 pkgrel=1
 arch=('x86_64')
-makedepends=(git meson lib32-glib2)
-source=("git+https://gitlab.gnome.org/GNOME/gobject-introspection.git"
-	"git+https://gitlab.gnome.org/GNOME/glib.git#tag=$gver")
-
-pkgver() {
-	cd $pkgname
-	git describe --tags | sed 's/-/+/g'
-}
+depends=(git meson lib32-glib2)
+makedepends=(python3 python2)
+source=(git+https://gitlab.gnome.org/GNOME/gobject-introspection.git
+	git+https://gitlab.gnome.org/GNOME/glib.git#tag=$gver)
 
 build() {
     export CC="gcc -m32 -mstackrealign"
     export CXX="g++ -m32 -mstackrealign"
     export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
 
-    meson $pkgname build	\
+    meson gobject-introspection build	\
 	-D gtk_doc=false	\
 	-D glib_src_dir="$srcdir/glib"	\
 	--prefix=/usr \

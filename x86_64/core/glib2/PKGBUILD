@@ -1,10 +1,12 @@
 pkgname=glib2
-pkgver=2.72.2
+pkgver=2.74.5
 pkgrel=1
 arch=('x86_64')
-depends=('libffi' 'pcre' 'util-linux' 'zlib' 'elfutils' 'libxslt' 'libxml2')
+depends=('libffi' 'pcre' 'pcre2' 'util-linux' 'zlib' 'elfutils' 'libxslt' 'libxml2')
 makedepends=('gtk-doc' 'python3-pip' 'dbus' 'gettext' 'git' 'meson' 'docbook-xml' 'docbook-xsl')
+gvdbcommit=0854af0fdb6d527a8d1999835ac2c5059976c210
 source=(git+https://gitlab.gnome.org/GNOME/glib.git#tag=$pkgver
+	git+https://gitlab.gnome.org/GNOME/gvdb.git#commit=$gvdbcommit
 	noisy-glib-compile-schemas.diff
 	glib-compile-schemas.hook
 	gio-querymodules.{hook,script})
@@ -14,6 +16,9 @@ prepare() {
 	git apply -3 ../noisy-glib-compile-schemas.diff
 
 	pip3 install pygments
+
+	mkdir -p subprojects/
+	cp -rf ../gvdb subprojects/
 }
 
 build() {

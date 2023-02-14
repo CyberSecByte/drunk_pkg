@@ -1,8 +1,8 @@
 pkgname=alsa-plugins
-pkgver=1.2.6
+pkgver=1.2.7.1
 pkgrel=1
 arch=(x86_64)
-makedepends=(alsa-lib dbus ffmpeg jack2 libavtp pulseaudio)
+makedepends=(alsa-lib dbus ffmpeg jack2 libavtp pulseaudio pipewire)
 source=("https://www.alsa-project.org/files/pub/plugins/$pkgname-$pkgver.tar.bz2"
 	pulse-sysdefault.diff)
 

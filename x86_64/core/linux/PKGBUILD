@@ -6,7 +6,7 @@ pkgdesc='Linux'
 arch=('x86_64')
 options=('!strip' 'emptydirs')
 install=linux.install
-makedepends=(rsync bison)
+makedepends=(rsync bison bc)
 source=(https://github.com/Drunk-Linux/Linux/archive/refs/heads/$rver-drunk.tar.gz)
 
 # Deprecated as we ship modules/headers in 1 pkg now

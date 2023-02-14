@@ -1,47 +1,52 @@
 pkgname=lib32-ffmpeg
-pkgver=4.4.1
+pkgver=5.1.2
 pkgrel=1
 arch=('x86_64')
-depends=(lib32-freetype2 lib32-libvorbis lib32-pulseaudio)
-makedepends=(nasm yasm)
-source=(https://ffmpeg.org/releases/ffmpeg-$pkgver.tar.xz)
+depends=(lib32-freetype2 lib32-libvorbis lib32-pulseaudio lib32-opencl-icd-loader
+	lib32-vulkan-icd-loader lib32-openssl)
+makedepends=(nasm yasm vulkan-headers opencl-headers)
+source=(https://ffmpeg.org/releases/ffmpeg-$pkgver.tar.xz
+    chromium-av_stream_get_first_dts.patch
+    hwcontext_vulkan.patch)
 
 prepare() {
-	cd ffmpeg-$pkgver
+    cd ffmpeg-$pkgver
 
-	sed -i 's/-lflite"/-lflite -lasound"/' configure 
+    sed -i 's/-lflite"/-lflite -lasound"/' configure
+
+    patch -p0 -i ../chromium-av_stream_get_first_dts.patch
+    patch -p1 -i ../hwcontext_vulkan.patch
 }
 
 build() {
-        export CC="gcc -m32"
-        export CXX="g++ -m32"
-        export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
+	export CC="gcc -m32"
+	export CXX="g++ -m32"
+	export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
 	export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
 
 	cd ffmpeg-$pkgver
 
-	./configure		\
-	--prefix=/usr        \
+	./configure \
+	--prefix=/usr \
 	--libdir=/usr/lib32 \
 	--cc="gcc -m32" \
 	--shlibdir=/usr/lib32 \
-        --disable-gpl         \
-        --disable-version3    \
-        --enable-nonfree     \
-        --enable-shared      \
-        --disable-debug      \
-        --disable-avresample  \
-        --disable-libass     \
-        --disable-libfdk-aac  \
-        --enable-libfreetype \
-        --disable-libmp3lame  \
-        --disable-libopus     \
-        --disable-libtheora   \
-        --enable-libvorbis   \
-        --disable-libvpx      \
-        --disable-libx264     \
-        --disable-libx265     \
-        --enable-openssl
+	--disable-gpl \
+	--disable-version3 \
+	--enable-nonfree \
+	--enable-shared \
+	--disable-debug \
+	--disable-libass \
+	--disable-libfdk-aac \
+	--enable-libfreetype \
+	--disable-libmp3lame \
+	--disable-libopus \
+	--disable-libtheora \
+	--enable-libvorbis \
+	--disable-libvpx \
+	--disable-libx264 \
+	--disable-libx265 \
+	--enable-openssl
 
 	make
 }
@@ -49,9 +54,9 @@ build() {
 package() {
 	cd ffmpeg-$pkgver
 
-        export CC="gcc -m32"
-        export CXX="g++ -m32"
-        export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
+	export CC="gcc -m32"
+	export CXX="g++ -m32"
+	export PKG_CONFIG="i686-pc-linux-gnu-pkg-config"
 
 	make DESTDIR=$pkgdir install
 

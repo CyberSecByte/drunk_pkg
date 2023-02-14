@@ -1,0 +1,48 @@
+diff -Naur configure configure
+--- configure	2022-08-27 20:00:25.604842735 +0300
++++ configure	2022-08-27 19:44:26.462209482 +0300
+@@ -7170,7 +7170,6 @@
+     check_cflags -Werror=format-security
+     check_cflags -Werror=implicit-function-declaration
+     check_cflags -Werror=missing-prototypes
+-    check_cflags -Werror=return-type
+     check_cflags -Werror=vla
+     check_cflags -Wformat
+     check_cflags -fdiagnostics-color=auto
+@@ -7211,7 +7210,6 @@
+     check_cflags -Qunused-arguments
+     check_cflags -Werror=implicit-function-declaration
+     check_cflags -Werror=missing-prototypes
+-    check_cflags -Werror=return-type
+ elif enabled cparser; then
+     add_cflags -Wno-missing-variable-declarations
+     add_cflags -Wno-empty-statement
+diff -Naur libavformat/avformat.h libavformat/avformat.h
+--- libavformat/avformat.h	2022-07-22 20:58:39.000000000 +0300
++++ libavformat/avformat.h	2022-08-27 19:33:13.670391840 +0300
+@@ -1128,6 +1128,9 @@
+  */
+ int64_t    av_stream_get_end_pts(const AVStream *st);
+ 
++// Chromium: We use the internal field first_dts
++int64_t    av_stream_get_first_dts(const AVStream *st);
++
+ #define AV_PROGRAM_RUNNING 1
+ 
+ /**
+diff -Naur libavformat/utils.c libavformat/utils.c
+--- libavformat/utils.c	2022-07-22 20:58:39.000000000 +0300
++++ libavformat/utils.c	2022-08-27 19:49:25.221651751 +0300
+@@ -354,6 +354,12 @@
+     return av_get_frame_filename2(buf, buf_size, path, number, 0);
+ }
+ 
++// Chromium: We use the internal field first_dts vvv
++int64_t av_stream_get_first_dts(const AVStream *st)
++{
++  return cffstream(st)->first_dts;
++}
++
+ void av_url_split(char *proto, int proto_size,
+                   char *authorization, int authorization_size,
+                   char *hostname, int hostname_size,
